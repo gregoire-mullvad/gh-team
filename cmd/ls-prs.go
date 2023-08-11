@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/cli/go-gh/v2/pkg/tableprinter"
@@ -63,7 +62,7 @@ It will only print PRs from repos the team can push to.`,
 			}
 		}
 		if err := table.Render(); err != nil {
-			log.Fatal(err)
+			return err
 		}
 		return nil
 	},
