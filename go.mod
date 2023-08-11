@@ -3,6 +3,7 @@ module github.com/gregoire-mullvad/gh-team
 go 1.19
 
 require (
+	github.com/briandowns/spinner v1.23.0
 	github.com/cli/go-gh/v2 v2.0.0
 	github.com/google/go-github/v53 v53.0.0
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
@@ -14,6 +15,7 @@ require (
 	github.com/cli/safeexec v1.0.0 // indirect
 	github.com/cli/shurcooL-graphql v0.0.3 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
+	github.com/fatih/color v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/henvic/httpretty v0.0.6 // indirect

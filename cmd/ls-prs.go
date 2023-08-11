@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/cli/go-gh/v2/pkg/tableprinter"
 	"github.com/cli/go-gh/v2/pkg/term"
 	"github.com/cli/go-gh/v2/pkg/text"
@@ -18,7 +19,7 @@ var lsPullsCmd = &cobra.Command{
 	Aliases: []string{"ls-pulls"},
 	Short:   "List open pull requests in the team's repositories",
 	Long: `List open pull requests in the team's repositories.  Example:
-    gh team ls-pulls myorg/myteam
+    gh team ls-prs
     myorg/repo1  #123  Add the new thing                   mybranch  someuser, about 1 week ago
     myorg/repo2  #42   Life, the universe, and everything  answer    deepthought, about 1 million years ago
 
@@ -28,6 +29,10 @@ It will only print PRs from repos the team can push to.`,
 		if err != nil {
 			return err
 		}
+		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond) // Build our new spinner
+		s.Color("reset")
+		s.Suffix = fmt.Sprintf(" Loading PRs for @%s", team)
+		s.Start() // Start the spinner
 		client, err := newClient()
 		if err != nil {
 			return err
@@ -61,6 +66,7 @@ It will only print PRs from repos the team can push to.`,
 				table.EndRow()
 			}
 		}
+		s.Stop()
 		if err := table.Render(); err != nil {
 			return err
 		}
