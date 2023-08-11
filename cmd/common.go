@@ -65,3 +65,19 @@ func colorForPRState(pr *github.PullRequest) string {
 		return ""
 	}
 }
+
+func listSubscriptions(client *github.Client, ctx context.Context) (map[int64]bool, error) {
+	repos, _, err := client.Activity.ListWatched(ctx, "", nil)
+	subs := make(map[int64]bool)
+	for _, repo := range repos {
+		subs[*repo.ID] = true
+	}
+	return subs, err
+}
+
+func subscribe(client *github.Client, ctx context.Context, owner, repo string) error {
+	t := true
+	sub := github.Subscription{Subscribed: &t}
+	_, _, err := client.Activity.SetRepositorySubscription(ctx, owner, repo, &sub)
+	return err
+}
