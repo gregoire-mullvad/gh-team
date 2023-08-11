@@ -13,6 +13,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var authorFilter string
+
 // lsPullsCmd represents the lsPulls command
 var lsPullsCmd = &cobra.Command{
 	Use:     "ls-prs",
@@ -51,6 +53,9 @@ It will only print PRs from repos the team can push to.`,
 			}
 
 			for _, pull := range pulls {
+				if authorFilter != "" && *pull.User.Login != authorFilter {
+					continue
+				}
 				table.AddField(*repo.FullName, tableprinter.WithColor(ansi.ColorFunc("gray+b")))
 				table.AddField(
 					fmt.Sprintf("#%d", *pull.Number),
@@ -75,5 +80,6 @@ It will only print PRs from repos the team can push to.`,
 }
 
 func init() {
+	lsPullsCmd.Flags().StringVarP(&authorFilter, "author", "A", "", "Filter by author")
 	rootCmd.AddCommand(lsPullsCmd)
 }
