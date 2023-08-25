@@ -10,6 +10,7 @@ import (
 )
 
 var lsReposShowRemotes bool
+var lsReposLanguage string
 
 // lsReposCmd represents the lsRepos command
 var lsReposCmd = &cobra.Command{
@@ -38,6 +39,9 @@ It will only print repos the team can push to.`,
 		}
 		proto := getGitProtocol()
 		for _, repo := range repos {
+			if lsReposLanguage != "" && !strings.EqualFold(repo.GetLanguage(), lsReposLanguage) {
+				continue
+			}
 			if lsReposShowRemotes && proto == "https" {
 				fmt.Println(*repo.CloneURL)
 			} else if lsReposShowRemotes {
@@ -65,6 +69,7 @@ func getGitProtocol() string {
 }
 
 func init() {
+	lsReposCmd.Flags().StringVarP(&lsReposLanguage, "language", "l", "", "Filter by primary coding language")
 	lsReposCmd.Flags().BoolVarP(&lsReposShowRemotes, "remotes", "r", false, "Print git remotes instead of repository names")
 	rootCmd.AddCommand(lsReposCmd)
 }
