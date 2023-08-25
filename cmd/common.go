@@ -12,7 +12,7 @@ import (
 
 func parseTeam(team string) (string, string, error) {
 	if team == "" {
-		return "", "", errors.New("no team set (use --team or $GH_TEAM)")
+		return "", "", errors.New("no team set (use --team or $GITHUB_TEAM)")
 	}
 	org, slug, ok := strings.Cut(team, "/")
 	if !ok {
