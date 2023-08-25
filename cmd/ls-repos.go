@@ -3,7 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	"github.com/cli/go-gh/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +36,11 @@ It will only print repos the team can push to.`,
 		if err != nil {
 			return err
 		}
+		proto := getGitProtocol()
 		for _, repo := range repos {
-			if lsReposShowRemotes {
+			if lsReposShowRemotes && proto == "https" {
+				fmt.Println(*repo.CloneURL)
+			} else if lsReposShowRemotes {
 				fmt.Println(*repo.SSHURL)
 			} else {
 				fmt.Println(*repo.FullName)
@@ -43,6 +48,20 @@ It will only print repos the team can push to.`,
 		}
 		return nil
 	},
+}
+
+func getGitProtocol() string {
+	config, err := config.Read()
+	if err != nil {
+		return "ssh"
+	}
+	if proto, err := config.Get([]string{"hosts", "github.com", "git_protocol"}); err == nil {
+		return proto
+	}
+	if proto, err := config.Get([]string{"git_protocol"}); err == nil {
+		return proto
+	}
+	return "ssh"
 }
 
 func init() {
