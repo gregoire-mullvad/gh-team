@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var lsReposShowRemotes bool
+
 // lsReposCmd represents the lsRepos command
 var lsReposCmd = &cobra.Command{
 	Use:   "ls-repos",
@@ -33,12 +35,17 @@ It will only print repos the team can push to.`,
 			return err
 		}
 		for _, repo := range repos {
-			fmt.Println(*repo.FullName)
+			if lsReposShowRemotes {
+				fmt.Println(*repo.SSHURL)
+			} else {
+				fmt.Println(*repo.FullName)
+			}
 		}
 		return nil
 	},
 }
 
 func init() {
+	lsReposCmd.Flags().BoolVarP(&lsReposShowRemotes, "remotes", "r", false, "Print git remotes instead of repository names")
 	rootCmd.AddCommand(lsReposCmd)
 }
