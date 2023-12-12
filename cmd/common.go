@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/cli/go-gh/v2/pkg/api"
@@ -30,12 +31,19 @@ func newClient() (*github.Client, error) {
 }
 
 func listRepos(client *github.Client, ctx context.Context, org, team string) ([]*github.Repository, error) {
+	exclude, err := regexp.Compile(excludeReposRegexp)
+	if err != nil {
+		return nil, err
+	}
 	repos, _, err := client.Teams.ListTeamReposBySlug(ctx, org, team, nil)
 	if err != nil {
 		return nil, err
 	}
 	var result []*github.Repository
 	for _, repo := range repos {
+		if exclude.MatchString(repo.GetFullName()) {
+			continue
+		}
 		if repo.Permissions["push"] {
 			result = append(result, repo)
 		}

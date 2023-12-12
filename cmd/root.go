@@ -20,7 +20,14 @@ func Execute() {
 }
 
 var team string
+var excludeReposRegexp string
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&team, "team", "T", os.ExpandEnv("$GITHUB_TEAM"), "github team (default is $GITHUB_TEAM)")
+	rootCmd.PersistentFlags().StringVarP(
+		&team, "team", "T", os.ExpandEnv("$GITHUB_TEAM"), "github team",
+	)
+	rootCmd.PersistentFlags().StringVarP(
+		&excludeReposRegexp, "exclude", "E", os.ExpandEnv("$GITHUB_TEAM_EXCLUDE"),
+		"exclude repositories that match the given regular expression",
+	)
 }
