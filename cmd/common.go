@@ -44,7 +44,7 @@ func listRepos(client *github.Client, ctx context.Context, org, team string) ([]
 		if exclude.MatchString(repo.GetFullName()) {
 			continue
 		}
-		if repo.Permissions["push"] {
+		if repo.Permissions[minPermission] {
 			result = append(result, repo)
 		}
 	}

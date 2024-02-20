@@ -20,11 +20,15 @@ func Execute() {
 }
 
 var team string
+var minPermission string
 var excludeReposRegexp string
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(
 		&team, "team", "T", os.ExpandEnv("$GITHUB_TEAM"), "github team",
+	)
+	rootCmd.PersistentFlags().StringVarP(
+		&minPermission, "min-permissions", "P", "push", "only include repos for which the team has at least this permission",
 	)
 	rootCmd.PersistentFlags().StringVarP(
 		&excludeReposRegexp, "exclude", "E", os.ExpandEnv("$GITHUB_TEAM_EXCLUDE"),
