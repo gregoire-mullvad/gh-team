@@ -31,9 +31,13 @@ func newClient() (*github.Client, error) {
 }
 
 func listRepos(client *github.Client, ctx context.Context, org, team string) ([]*github.Repository, error) {
-	exclude, err := regexp.Compile(excludeReposRegexp)
+	var exclude *regexp.Regexp
+	var err error
+	if excludeReposRegexp != "" {
+		exclude, err = regexp.Compile(excludeReposRegexp)
 	if err != nil {
 		return nil, err
+	}
 	}
 	repos, _, err := client.Teams.ListTeamReposBySlug(ctx, org, team, nil)
 	if err != nil {
@@ -41,7 +45,7 @@ func listRepos(client *github.Client, ctx context.Context, org, team string) ([]
 	}
 	var result []*github.Repository
 	for _, repo := range repos {
-		if exclude.MatchString(repo.GetFullName()) {
+		if exclude != nil && exclude.MatchString(repo.GetFullName()) {
 			continue
 		}
 		if repo.Permissions[minPermission] {
