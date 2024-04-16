@@ -16,7 +16,7 @@ func parseTeam(team string) (string, string, error) {
 		return "", "", errors.New("no team set (use --team or $GITHUB_TEAM)")
 	}
 	org, slug, ok := strings.Cut(team, "/")
-	if !ok {
+	if org == "" || slug == "" || !ok {
 		return "", "", fmt.Errorf("%s: invalid team, expected <org>/<team>", team)
 	}
 	return org, slug, nil
@@ -35,9 +35,9 @@ func listRepos(client *github.Client, ctx context.Context, org, team string) ([]
 	var err error
 	if excludeReposRegexp != "" {
 		exclude, err = regexp.Compile(excludeReposRegexp)
-	if err != nil {
-		return nil, err
-	}
+		if err != nil {
+			return nil, err
+		}
 	}
 	repos, _, err := client.Teams.ListTeamReposBySlug(ctx, org, team, nil)
 	if err != nil {
