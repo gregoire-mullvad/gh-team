@@ -1,16 +1,22 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/cli/go-gh/v2/pkg/config"
+	"github.com/cli/go-gh/v2/pkg/template"
+	"github.com/cli/go-gh/v2/pkg/term"
 	"github.com/spf13/cobra"
 )
 
 var lsReposShowRemotes bool
 var lsReposLanguage string
+var lsReposTemplate string
 
 // lsReposCmd represents the lsRepos command
 var lsReposCmd = &cobra.Command{
@@ -37,12 +43,26 @@ It will only print repos the team can push to.`,
 		if err != nil {
 			return err
 		}
+		if lsReposTemplate != "" {
+			term := term.FromEnv()
+			tWidth, _, _ := term.Size()
+			tmpl := template.New(os.Stdout, tWidth, term.IsColorEnabled())
+			if err := tmpl.Parse(lsReposTemplate); err != nil {
+				return err
+			}
+			json, err := json.Marshal(repos)
+			if err != nil {
+				return err
+			}
+			return tmpl.Execute(bytes.NewReader(json))
+		}
 		proto := getGitProtocol()
 		for _, repo := range repos {
 			if lsReposLanguage != "" && !strings.EqualFold(repo.GetLanguage(), lsReposLanguage) {
 				continue
 			}
-			if lsReposShowRemotes && proto == "https" {
+			if lsReposTemplate != "" {
+			} else if lsReposShowRemotes && proto == "https" {
 				fmt.Println(*repo.CloneURL)
 			} else if lsReposShowRemotes {
 				fmt.Println(*repo.SSHURL)
@@ -71,5 +91,6 @@ func getGitProtocol() string {
 func init() {
 	lsReposCmd.Flags().StringVarP(&lsReposLanguage, "language", "l", "", "Filter by primary coding language")
 	lsReposCmd.Flags().BoolVarP(&lsReposShowRemotes, "remotes", "r", false, "Print git remotes instead of repository names")
+	lsReposCmd.Flags().StringVarP(&lsReposTemplate, "template", "t", "", `Format JSON output using a Go template; see "gh help formatting"`)
 	rootCmd.AddCommand(lsReposCmd)
 }
