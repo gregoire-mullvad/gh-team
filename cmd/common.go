@@ -45,6 +45,9 @@ func listRepos(client *github.Client, ctx context.Context, org, team string) ([]
 	}
 	var result []*github.Repository
 	for _, repo := range repos {
+		if repo.GetArchived() {
+			continue
+		}
 		if exclude != nil && exclude.MatchString(repo.GetFullName()) {
 			continue
 		}
