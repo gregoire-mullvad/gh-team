@@ -22,7 +22,7 @@ var lsReposTemplate string
 var lsReposCmd = &cobra.Command{
 	Use:   "ls-repos",
 	Args:  cobra.NoArgs,
-	Short: "Print the team's repositories to stdout",
+	Short: "List the team's repositories",
 	Long: `Print the team's repositories to stdout. Example:
 
     gh team ls-repos myorg/myteam

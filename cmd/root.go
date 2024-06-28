@@ -9,7 +9,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gh-team [--team <org>/<team>] [command]",
-	Short: "A brief description of your application",
+	Short: "Work with Github teams.",
 }
 
 func Execute() {
