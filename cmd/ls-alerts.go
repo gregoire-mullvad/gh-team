@@ -19,8 +19,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var OpenState = "open"
+
 var (
-	lsAlertsState     string
 	lsAlertsScope     string
 	lsAlertsEcosystem string
 )
@@ -28,7 +29,7 @@ var (
 // lsAlertsCmd represents the lsAlerts command
 var lsAlertsCmd = &cobra.Command{
 	Use:   "ls-alerts",
-	Short: "List dependabot alerts in the team's repositories",
+	Short: "List open dependabot alerts in the team's repositories",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		org, slug, err := parseTeam(team)
 		if err != nil {
@@ -51,10 +52,7 @@ var lsAlertsCmd = &cobra.Command{
 		termWidth, _, _ := term.Size()
 		table := tableprinter.New(term.Out(), term.IsTerminalOutput(), termWidth)
 		errTable := tableprinter.New(term.Out(), term.IsTerminalOutput(), termWidth)
-		opts := github.ListAlertsOptions{}
-		if lsAlertsState != "" {
-			opts.State = &lsAlertsState
-		}
+		opts := github.ListAlertsOptions{State: &OpenState}
 		if lsAlertsScope != "" {
 			opts.Scope = &lsAlertsScope
 		}
@@ -137,17 +135,6 @@ func colorForAlertSeverity(a *github.DependabotAlert) string {
 
 func init() {
 	rootCmd.AddCommand(lsAlertsCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// lsAlertsCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	lsAlertsCmd.Flags().StringVar(&lsAlertsState, "state", "",
-		"A comma-separated list of states. If specified, only alerts with these states will be returned (auto_dismissed, dismissed, fixed, open)")
 	lsAlertsCmd.Flags().StringVar(&lsAlertsScope, "scope", "",
 		"The scope of the vulnerable dependency. If specified, only alerts with this scope will be returned (development, runtime)")
 	lsAlertsCmd.Flags().StringVar(&lsAlertsEcosystem, "ecosystem", "",
