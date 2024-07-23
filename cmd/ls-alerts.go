@@ -37,7 +37,7 @@ var lsAlertsCmd = &cobra.Command{
 		}
 		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond) // Build our new spinner
 		s.Color("reset")
-		s.Suffix = fmt.Sprintf(" Loading alerts for @%s", team)
+		s.Suffix = fmt.Sprintf(" Loading dependabot alerts for @%s", team)
 		s.Start() // Start the spinner
 		defer s.Stop()
 		client, err := newClient()
