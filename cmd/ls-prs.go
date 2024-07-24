@@ -14,6 +14,7 @@ import (
 )
 
 var authorFilter string
+var lsPullsShowURL bool
 
 // lsPullsCmd represents the lsPulls command
 var lsPullsCmd = &cobra.Command{
@@ -68,6 +69,9 @@ It will only print PRs from repos the team can push to.`,
 						text.RelativeTimeAgo(time.Now(), (*pull.CreatedAt).Time),
 					),
 					tableprinter.WithColor(ansi.ColorFunc("gray")))
+				if lsPullsShowURL {
+					table.AddField(pull.GetHTMLURL())
+				}
 				table.EndRow()
 			}
 		}
@@ -81,5 +85,6 @@ It will only print PRs from repos the team can push to.`,
 
 func init() {
 	lsPullsCmd.Flags().StringVarP(&authorFilter, "author", "A", "", "Filter by author")
+	lsPullsCmd.Flags().BoolVarP(&lsPullsShowURL, "url", "u", false, "Print URLs")
 	rootCmd.AddCommand(lsPullsCmd)
 }
