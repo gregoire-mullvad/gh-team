@@ -39,21 +39,28 @@ func listRepos(client *github.Client, ctx context.Context, org, team string) ([]
 			return nil, err
 		}
 	}
-	repos, _, err := client.Teams.ListTeamReposBySlug(ctx, org, team, nil)
-	if err != nil {
-		return nil, err
-	}
+	opt := github.ListOptions{}
 	var result []*github.Repository
-	for _, repo := range repos {
-		if repo.GetArchived() {
-			continue
+	for {
+		repos, resp, err := client.Teams.ListTeamReposBySlug(ctx, org, team, &opt)
+		if err != nil {
+			return nil, err
 		}
-		if exclude != nil && exclude.MatchString(repo.GetFullName()) {
-			continue
+		for _, repo := range repos {
+			if repo.GetArchived() {
+				continue
+			}
+			if exclude != nil && exclude.MatchString(repo.GetFullName()) {
+				continue
+			}
+			if repo.Permissions[minPermission] {
+				result = append(result, repo)
+			}
 		}
-		if repo.Permissions[minPermission] {
-			result = append(result, repo)
+		if resp.NextPage == 0 {
+			break
 		}
+		opt.Page = resp.NextPage
 	}
 	return result, nil
 }
