@@ -36,6 +36,7 @@ It will only print PRs from repos the team can push to.`,
 		s.Color("reset")
 		s.Suffix = fmt.Sprintf(" Loading PRs for @%s", team)
 		s.Start() // Start the spinner
+		defer s.Stop()
 		client, err := newClient()
 		if err != nil {
 			return err
