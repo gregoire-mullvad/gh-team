@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cli/go-gh/v2/pkg/config"
+	"github.com/cli/go-gh/v2"
 	"github.com/cli/go-gh/v2/pkg/template"
 	"github.com/cli/go-gh/v2/pkg/term"
 	"github.com/spf13/cobra"
@@ -75,17 +75,11 @@ It will only print repos the team can push to.`,
 }
 
 func getGitProtocol() string {
-	config, err := config.Read()
+	stdout, _, err := gh.Exec("config", "get", "foo")
 	if err != nil {
 		return "ssh"
 	}
-	if proto, err := config.Get([]string{"hosts", "github.com", "git_protocol"}); err == nil {
-		return proto
-	}
-	if proto, err := config.Get([]string{"git_protocol"}); err == nil {
-		return proto
-	}
-	return "ssh"
+	return stdout.String()
 }
 
 func init() {
