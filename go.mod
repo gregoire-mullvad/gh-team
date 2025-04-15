@@ -1,8 +1,6 @@
 module github.com/gregoire-mullvad/gh-team
 
-go 1.21
-
-toolchain go1.21.7
+go 1.22
 
 require (
 	github.com/briandowns/spinner v1.23.0
