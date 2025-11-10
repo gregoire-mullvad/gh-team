@@ -102,7 +102,7 @@ var lsAlertsCmd = &cobra.Command{
 			))
 			table.AddField(alert.GetDependency().GetScope())
 			table.AddField(
-				fmt.Sprintf("%s, %s", strings.Title(alert.GetState()),
+				fmt.Sprintf("%s, %s", alert.GetState(),
 					text.RelativeTimeAgo(time.Now(), (alert.GetCreatedAt()).Time),
 				),
 				tableprinter.WithColor(ansi.ColorFunc("gray")))
