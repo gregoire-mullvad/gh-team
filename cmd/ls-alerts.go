@@ -37,7 +37,7 @@ var lsAlertsCmd = &cobra.Command{
 		}
 		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond) // Build our new spinner
 		s.Color("reset")
-		s.Suffix = fmt.Sprintf(" Loading dependabot alerts for @%s", team)
+		s.Suffix = " Loading dependabot alerts…"
 		s.Start() // Start the spinner
 		defer s.Stop()
 		client, err := newClient()
@@ -61,6 +61,7 @@ var lsAlertsCmd = &cobra.Command{
 		}
 		var alerts []*github.DependabotAlert
 		for _, repo := range repos {
+			s.Suffix = fmt.Sprintf(" Loading dependabot alerts for %s", repo.GetFullName())
 			repoAlerts, _, err := client.Dependabot.ListRepoAlerts(
 				context.TODO(),
 				repo.GetOwner().GetLogin(),

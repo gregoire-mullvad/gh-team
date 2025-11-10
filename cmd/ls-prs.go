@@ -34,7 +34,7 @@ It will only print PRs from repos the team can push to.`,
 		}
 		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond) // Build our new spinner
 		s.Color("reset")
-		s.Suffix = fmt.Sprintf(" Loading PRs for @%s", team)
+		s.Suffix = " Loading PRs…"
 		s.Start() // Start the spinner
 		defer s.Stop()
 		client, err := newClient()
@@ -49,6 +49,7 @@ It will only print PRs from repos the team can push to.`,
 		termWidth, _, _ := term.Size()
 		table := tableprinter.New(term.Out(), term.IsTerminalOutput(), termWidth)
 		for _, repo := range repos {
+			s.Suffix = fmt.Sprintf(" Loading PRs for %s", repo.GetFullName())
 			pulls, err := listOpenPullRequests(client, context.TODO(), *repo.Owner.Login, *repo.Name)
 			if err != nil {
 				return err
